@@ -108,14 +108,19 @@
     </div>
   </section>
 <section id="login">
-  <h2>Student Login</h2>
-  <form>
-    <input type="email" placeholder="Enter Email" required>
-    <br><br>
-    <input type="password" placeholder="Enter Password" required>
-    <br><br>
-    <button type="button">Login</button>
-  </form>
+  <h2>Student Login / Register</h2>
+
+  <input id="studentEmail" type="email" placeholder="Enter Email" required>
+  <br><br>
+
+  <input id="studentPassword" type="password" placeholder="Enter Password" required>
+  <br><br>
+
+  <button type="button" onclick="studentSignup()">Create Account</button>
+
+  <button type="button" onclick="studentLogin()">Login</button>
+
+  <p id="authMessage"></p>
 </section>
   <section id="contact">
     <h2>Start Learning French Today!</h2>
@@ -169,5 +174,42 @@
     Admin Login
   </button>
 </section>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://ilpsvqhgwwkzursjqiwf.supabase.co";
+const SUPABASE_KEY = "YAHAN_PUBLISHABLE_KEY_LAGAYE";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+async function studentSignup() {
+  const email = document.getElementById("studentEmail").value;
+  const password = document.getElementById("studentPassword").value;
+
+  const { error } = await supabaseClient.auth.signUp({
+    email,
+    password
+  });
+
+  document.getElementById("authMessage").innerText =
+    error ? error.message : "Account created! Check your email.";
+}
+
+async function studentLogin() {
+  const email = document.getElementById("studentEmail").value;
+  const password = document.getElementById("studentPassword").value;
+
+  const { error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  document.getElementById("authMessage").innerText =
+    error ? error.message : "Login successful!";
+}
+</script>
 </body>
 </html>
