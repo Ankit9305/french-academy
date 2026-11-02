@@ -177,6 +177,43 @@
     <button type="button" onclick="adminLogout()">Logout</button>
   </div>
 </section>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://ilpsvqhgwwkzursjqiwf.supabase.co";
+const SUPABASE_KEY = "sb_publishable_nqmWzTKBvhEE3V3C6BxUKg_ssL2EhI6";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+async function studentSignup() {
+  const email = document.getElementById("studentEmail").value;
+  const password = document.getElementById("studentPassword").value;
+
+  const { error } = await supabaseClient.auth.signUp({
+    email,
+    password
+  });
+
+  document.getElementById("authMessage").innerText =
+    error ? error.message : "Account created! Check your email.";
+}
+
+async function studentLogin() {
+  const email = document.getElementById("studentEmail").value;
+  const password = document.getElementById("studentPassword").value;
+
+  const { error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  document.getElementById("authMessage").innerText =
+    error ? error.message : "Login successful!";
+}
   async function adminLogin() {
   const email = document.getElementById("adminEmail").value;
   const password = document.getElementById("adminPassword").value;
@@ -214,42 +251,6 @@ async function adminLogout() {
   await supabaseClient.auth.signOut();
   document.getElementById("adminDashboard").style.display = "none";
   document.getElementById("adminMessage").innerText = "Logged out.";
-}
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-const SUPABASE_URL = "https://ilpsvqhgwwkzursjqiwf.supabase.co";
-const SUPABASE_KEY = "sb_publishable_nqmWzTKBvhEE3V3C6BxUKg_ssL2EhI6";
-
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
-async function studentSignup() {
-  const email = document.getElementById("studentEmail").value;
-  const password = document.getElementById("studentPassword").value;
-
-  const { error } = await supabaseClient.auth.signUp({
-    email,
-    password
-  });
-
-  document.getElementById("authMessage").innerText =
-    error ? error.message : "Account created! Check your email.";
-}
-
-async function studentLogin() {
-  const email = document.getElementById("studentEmail").value;
-  const password = document.getElementById("studentPassword").value;
-
-  const { error } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password
-  });
-
-  document.getElementById("authMessage").innerText =
-    error ? error.message : "Login successful!";
 }
 </script>
 </body>
