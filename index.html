@@ -230,7 +230,9 @@ async function studentLogin() {
     error ? error.message : "Login successful!";
 }
   async function adminLogin() {
-  const email = document.getElementById("adminEmail").value;
+
+async function adminLogin() {
+  const email = document.getElementById("adminEmail").value.trim();
   const password = document.getElementById("adminPassword").value;
   const message = document.getElementById("adminMessage");
 
@@ -242,7 +244,7 @@ async function studentLogin() {
   });
 
   if (error) {
-    message.innerText = error.message;
+    message.innerText = "Login Error: " + error.message;
     return;
   }
 
@@ -250,11 +252,20 @@ async function studentLogin() {
     .from("profiles")
     .select("role")
     .eq("id", data.user.id)
-    .single();
+    .maybeSingle();
 
-  if (profileError || profile.role !== "admin") {
-    await supabaseClient.auth.signOut();
-    message.innerText = "Admin access denied.";
+  if (profileError) {
+    message.innerText = "Profile Error: " + profileError.message;
+    return;
+  }
+
+  if (!profile) {
+    message.innerText = "Admin profile not found.";
+    return;
+  }
+
+  if (profile.role !== "admin") {
+    message.innerText = "Wrong role: " + profile.role;
     return;
   }
 
@@ -262,46 +273,6 @@ async function studentLogin() {
   document.getElementById("adminDashboard").style.display = "block";
 }
 
-async function adminLogout() {
-  await supabaseClient.auth.signOut();
-  document.getElementById("adminDashboard").style.display = "none";
-  document.getElementById("adminMessage").innerText = "Logged out.";
-}
-  supabaseClient.auth.onAuthStateChange((event, session) => {
-  if (event === "PASSWORD_RECOVERY" && session) {
-    document.getElementById("resetPassword").style.display = "block";
-    document.getElementById("resetPassword").scrollIntoView();
-  }
-});
-
-async function updatePassword() {
-  const password = document.getElementById("newPassword").value;
-  const confirm = document.getElementById("confirmPassword").value;
-  const message = document.getElementById("resetMessage");
-
-  if (password.length < 8) {
-    message.innerText = "Password must be at least 8 characters.";
-    return;
-  }
-
-  if (password !== confirm) {
-    message.innerText = "Passwords do not match.";
-    return;
-  }
-
-  const { error } = await supabaseClient.auth.updateUser({
-    password: password
-  });
-
-  if (error) {
-    message.innerText = error.message;
-    return;
-  }
-
-  message.innerText = "Password updated successfully!";
-  document.getElementById("newPassword").value = "";
-  document.getElementById("confirmPassword").value = "";
-}
 </script>
 </body>
 </html>
