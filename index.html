@@ -159,21 +159,62 @@
   </button>
 </section>
 <section id="admin">
-  <h2>Admin Panel</h2>
-  <p>Welcome, Academy Admin!</p>
+  <h2>Admin Login</h2>
 
-  <label>Admin Email:</label><br>
-  <input type="email" placeholder="Enter Admin Email">
+  <input id="adminEmail" type="email" placeholder="Admin Email">
   <br><br>
 
-  <label>Password:</label><br>
-  <input type="password" placeholder="Enter Password">
+  <input id="adminPassword" type="password" placeholder="Admin Password">
   <br><br>
 
-  <button onclick="alert('Demo Admin Panel')">
-    Admin Login
-  </button>
+  <button type="button" onclick="adminLogin()">Login as Admin</button>
+
+  <p id="adminMessage"></p>
+
+  <div id="adminDashboard" style="display:none;">
+    <h2>Welcome to Admin Dashboard!</h2>
+    <p>You are logged in as Admin.</p>
+    <button type="button" onclick="adminLogout()">Logout</button>
+  </div>
 </section>
+  async function adminLogin() {
+  const email = document.getElementById("adminEmail").value;
+  const password = document.getElementById("adminPassword").value;
+  const message = document.getElementById("adminMessage");
+
+  message.innerText = "Checking login...";
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    message.innerText = error.message;
+    return;
+  }
+
+  const { data: profile, error: profileError } = await supabaseClient
+    .from("profiles")
+    .select("role")
+    .eq("id", data.user.id)
+    .single();
+
+  if (profileError || profile.role !== "admin") {
+    await supabaseClient.auth.signOut();
+    message.innerText = "Admin access denied.";
+    return;
+  }
+
+  message.innerText = "Admin Login Successful!";
+  document.getElementById("adminDashboard").style.display = "block";
+}
+
+async function adminLogout() {
+  await supabaseClient.auth.signOut();
+  document.getElementById("adminDashboard").style.display = "none";
+  document.getElementById("adminMessage").innerText = "Logged out.";
+}
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
