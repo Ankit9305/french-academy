@@ -275,6 +275,36 @@ async function adminLogin() {
   message.innerText = "Admin Login Successful!";
   document.getElementById("adminDashboard").style.display = "block";
 }
+  async function uploadPDF() {
+  const file = document.getElementById("pdfFile").files[0];
+  const message = document.getElementById("uploadMessage");
+
+  if (!file) {
+    message.innerText = "Please select a PDF first.";
+    return;
+  }
+
+  if (file.type !== "application/pdf") {
+    message.innerText = "Only PDF files are allowed.";
+    return;
+  }
+
+  message.innerText = "Uploading PDF...";
+
+  const filePath = Date.now() + "-" + file.name;
+
+  const { data, error } = await supabaseClient.storage
+    .from("french-notes")
+    .upload(filePath, file);
+
+  if (error) {
+    message.innerText = "Upload Error: " + error.message;
+    return;
+  }
+
+  message.innerText = "PDF uploaded successfully!";
+  document.getElementById("pdfFile").value = "";
+}
 async function adminLogout() {
   await supabaseClient.auth.signOut();
   document.getElementById("adminDashboard").style.display = "none";
