@@ -300,11 +300,7 @@ async function studentLogin() {
   document.getElementById("contact").style.display = "none";
   document.querySelector("footer").style.display = "none";
 
-  document.getElementById("studentDashboard").style.display = "block";
-
-  await loadStudentPDFs();
-}
-
+  
 async function studentLogout() {
   await supabaseClient.auth.signOut();
 
