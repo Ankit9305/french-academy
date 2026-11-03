@@ -233,8 +233,58 @@ async function studentLogin() {
     password
   });
 
+  if (error) {
+    document.getElementById("authMessage").innerText = error.message;
+    return;
+  }
+
   document.getElementById("authMessage").innerText =
-    error ? error.message : "Login successful!";
+    "Login successful!";
+
+  document.getElementById("notes").style.display = "block";
+
+  await loadStudentPDFs();
+}
+  async function loadStudentPDFs() {
+  const list = document.getElementById("studentPdfList");
+  list.innerHTML = "Loading PDF Notes...";
+
+  const { data, error } = await supabaseClient.storage
+    .from("french-notes")
+    .list();
+
+  if (error) {
+    list.innerText = "Error: " + error.message;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    list.innerText = "No PDF Notes uploaded yet.";
+    return;
+  }
+
+  list.innerHTML = "";
+
+  for (const file of data) {
+    if (!file.name.toLowerCase().endsWith(".pdf")) continue;
+
+    const { data: linkData, error: linkError } =
+      await supabaseClient.storage
+        .from("french-notes")
+        .createSignedUrl(file.name, 3600);
+
+    if (linkError) continue;
+
+    const link = document.createElement("a");
+    link.href = linkData.signedUrl;
+    link.textContent = "Download " + file.name;
+    link.download = file.name;
+    link.target = "_blank";
+    link.style.display = "block";
+    link.style.margin = "15px";
+
+    list.appendChild(link);
+  }
 }
 async function adminLogin() {
   const email = document.getElementById("adminEmail").value.trim();
