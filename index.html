@@ -189,6 +189,11 @@
   <div id="adminDashboard" style="display:none;">
     <h2>Welcome to Admin Dashboard!</h2>
     <p>You are logged in as Admin.</p>
+    <h3>Upload French PDF Notes</h3>
+<input type="file" id="pdfFile" accept="application/pdf">
+<br><br>
+<button type="button" onclick="uploadPDF()">Upload PDF</button>
+<p id="uploadMessage"></p>
     <button type="button" onclick="adminLogout()">Logout</button>
   </div>
 </section>
