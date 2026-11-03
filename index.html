@@ -229,8 +229,6 @@ async function studentLogin() {
   document.getElementById("authMessage").innerText =
     error ? error.message : "Login successful!";
 }
-  async function adminLogin() {
-
 async function adminLogin() {
   const email = document.getElementById("adminEmail").value.trim();
   const password = document.getElementById("adminPassword").value;
@@ -272,7 +270,11 @@ async function adminLogin() {
   message.innerText = "Admin Login Successful!";
   document.getElementById("adminDashboard").style.display = "block";
 }
-
+async function adminLogout() {
+  await supabaseClient.auth.signOut();
+  document.getElementById("adminDashboard").style.display = "none";
+  document.getElementById("adminMessage").innerText = "Logged out.";
+}
 </script>
 </body>
 </html>
